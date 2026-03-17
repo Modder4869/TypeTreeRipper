@@ -243,7 +243,9 @@ extern "C" void StartDumper()
         DobbyHook(androidLogVPrint, (void *)hooked_android_log_vprint, (void **)&original_android_log_vprint);
     }
 }
-
+__attribute__((constructor)) void init_(){
+StartDumper()
+}
 extern "C" jint JNIEXPORT JNI_OnLoad(JavaVM* vm, void* reserved)
 {
     static constexpr auto kKittyInjectorMagic = 1337;
