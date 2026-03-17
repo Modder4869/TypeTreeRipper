@@ -247,10 +247,7 @@ extern "C" void StartDumper()
 extern "C" jint JNIEXPORT JNI_OnLoad(JavaVM* vm, void* reserved)
 {
     static constexpr auto kKittyInjectorMagic = 1337;
-    if (reinterpret_cast<uintptr_t>(reserved) == kKittyInjectorMagic)
-    {
-        StartDumper();
-    }
+    StartDumper();
 
     return JNI_VERSION_1_6;
 }
