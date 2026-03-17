@@ -244,7 +244,7 @@ extern "C" void StartDumper()
     }
 }
 __attribute__((constructor)) void init_(){
-StartDumper()
+StartDumper();
 }
 extern "C" jint JNIEXPORT JNI_OnLoad(JavaVM* vm, void* reserved)
 {
