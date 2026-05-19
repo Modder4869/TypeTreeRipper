@@ -216,21 +216,6 @@ namespace
 
 extern "C" void StartDumper()
 {
-    if (android_get_device_api_level() >= 30) 
-    {
-        const auto liblog = dlopen("liblog.so", 0);
-        const auto p__android_log_set_logger = (decltype(&__android_log_set_logger))dlsym(liblog, "__android_log_set_logger");
-        original_android_logger_function = (decltype(&__android_log_logd_logger))dlsym(liblog, "__android_log_logd_logger");
-        p__android_log_set_logger([](const __android_log_message* msg)
-        {
-            ProcessLogMessage(msg->message);
-            original_android_logger_function(msg);
-        });
-    }
-    else 
-    {
-        // fallback for API level < 30
-
         const auto androidLogPrint = DobbySymbolResolver("liblog.so", "__android_log_print");
         const auto androidLogVPrint = DobbySymbolResolver("liblog.so", "__android_log_vprint");
         if (androidLogPrint == nullptr || androidLogVPrint == nullptr)
@@ -241,10 +226,9 @@ extern "C" void StartDumper()
 
         DobbyHook(androidLogPrint, (void *)hooked_android_log_print, (void **)&original_android_log_print);
         DobbyHook(androidLogVPrint, (void *)hooked_android_log_vprint, (void **)&original_android_log_vprint);
-    }
 }
 __attribute__((constructor)) void init_(){
-StartDumper();
+//StartDumper();
 }
 extern "C" jint JNIEXPORT JNI_OnLoad(JavaVM* vm, void* reserved)
 {
