@@ -178,7 +178,7 @@ namespace
             ProcessProductNameMessage(msg);
         }
 
-        if (msg.starts_with("Built from"))
+        if (msg.starts_with("Built from") || msg.starts_with("Product Name:"))
         {
             ProcessBuiltFromMessage(msg);
         }
