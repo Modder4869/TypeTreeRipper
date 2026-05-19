@@ -40,6 +40,9 @@ public:
                     const auto result = static_cast<ElfInfo*>(context);
                     result->Sections = std::span(info->dlpi_phdr, info->dlpi_phnum);
                     result->BaseAddress = info->dlpi_addr;
+                    __android_log_print(ANDROID_LOG_DEBUG, "TypeTreeRipper",
+            "Found libunity.so! BaseAddress = 0x%lx, phnum = %zu",
+            info->dlpi_addr, info->dlpi_phnum);
                     return true;
                 }
 
