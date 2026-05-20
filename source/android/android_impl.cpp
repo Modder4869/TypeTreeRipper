@@ -107,7 +107,21 @@ namespace
     decltype(&__android_log_print) original_android_log_print;
     decltype(&__android_log_vprint) original_android_log_vprint;
     __android_logger_function original_android_logger_function;
-
+    extern "C" void SetUnityVersionAndDump(const char* versionString, int variant)
+    {
+        auto parsed = VersionStringToRevision(std::string(versionString));
+        if (parsed) DetectedRevision = *parsed;
+        else DetectedRevision = Revision::V0_0_0;  // fallback
+    
+        DetectedVariant = static_cast<Variant>(variant);
+        
+        __android_log_print(ANDROID_LOG_DEBUG, "TypeTreeRipper",
+            "Manual version set: %s -> revision %d, variant %d",
+            versionString, DetectedRevision, DetectedVariant);
+        
+        RunDumper<AndroidDumper>(DetectedRevision, DetectedVariant);
+        std::abort();
+    }
     void ProcessProductNameMessage(const std::string_view) 
     {
         __android_log_print(ANDROID_LOG_DEBUG, "Unity", "[TypeTreeRipper] Detected Unity engine initialization, starting dumper");
@@ -178,7 +192,7 @@ namespace
             ProcessProductNameMessage(msg);
         }
 
-        if (msg.starts_with("Built from") || msg.starts_with("Product Name:"))
+        if (msg.starts_with("Built from"))
         {
             ProcessBuiltFromMessage(msg);
         }
